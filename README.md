@@ -17,6 +17,13 @@ The conference prototype produced qualitative evidence that ablating selected re
 
 **Keywords:** AI Safety, LLM Alignment, Mechanistic Interpretability, Representation Engineering, Activation Engineering, Residual Stream, Direction Ablation, PyTorch Hooks, Hugging Face Transformers, PCA, Red Teaming, Model Evaluation, Reproducible ML
 
+## Notebooks
+
+| Version | Purpose | Launch |
+|---|---|---|
+| v1 — 2025 conference prototype | Original paired-prompt, activation extraction, visualization, and layer-ablation workflow | [Open v1 in Colab](https://colab.research.google.com/github/chelsietao/LLM-Refusal-Mechanism-Exploration/blob/main/LLM_Refusal_Mechanism_Exploration.ipynb) |
+| v2 — reproducible evaluation | Train/validation/test separation, corrected layer alignment, random-direction control, bootstrap intervals, and safe artifacts | [Open v2 in Colab](https://colab.research.google.com/github/chelsietao/LLM-Refusal-Mechanism-Exploration/blob/codex/v2-colab/LLM_Refusal_Mechanism_Exploration_v2.ipynb) |
+
 ---
 
 # Part I — Conference Research Prototype (as of 2025-12)
