@@ -23,6 +23,33 @@ The conference prototype produced qualitative evidence that ablating selected re
 |---|---|---|
 | v1 — 2025 conference prototype | Original paired-prompt, activation extraction, visualization, and layer-ablation workflow | [Open v1 in Colab](https://colab.research.google.com/github/chelsietao/LLM-Refusal-Mechanism-Exploration/blob/main/LLM_Refusal_Mechanism_Exploration.ipynb) |
 | v2 — reproducible evaluation | Train/validation/test separation, corrected layer alignment, random-direction control, bootstrap intervals, and safe artifacts | [Open v2 in Colab](https://colab.research.google.com/github/chelsietao/LLM-Refusal-Mechanism-Exploration/blob/codex/v2-colab/LLM_Refusal_Mechanism_Exploration_v2.ipynb) |
+| v3 — rebuild (this branch, **not yet run on GPU**) | 220-pair data file, all-layer/all-position ablation, steering, shuffled-label & random controls, weight orthogonalization + latency benchmark | [Open v3 in Colab](https://colab.research.google.com/github/chelsietao/LLM-Refusal-Mechanism-Exploration/blob/rebuild/v3/LLM_Refusal_Mechanism_Exploration_v3.ipynb) |
+
+## v3 status (branch `rebuild/v3`)
+
+v3 moves the logic out of the notebook into a tested library, `src/refusal_lab/`:
+
+| Module | Purpose |
+|---|---|
+| `data.py` | loads `data/prompts_v3.jsonl` (220 pairs, 11 categories), validates, and makes a category-stratified, pair-preserving split |
+| `extraction.py` | chat-template formatting, last-token residuals captured by hooks on decoder layers, greedy generation |
+| `interventions.py` | all-layer/all-position ablation, single-layer ablation, activation addition (steering) |
+| `directions.py` | difference of means, shuffled-label control, random control |
+| `orthogonalize.py` | reversible weight edit `W <- (I - r r^T) W` (embedding, `o_proj`, `down_proj`) |
+| `bench.py` | latency / throughput of baseline vs hook vs edited weights, plus a logit-fidelity check |
+| `scoring.py`, `stats.py`, `evaluate.py` | opening-phrase refusal scorer, bootstrap CIs, end-to-end evaluation with text-free logs |
+
+**What is verified:** `pytest` (19 tests, CPU, tiny random Llama/Gemma-2 models) checks that the split is leak-free, that all-position ablation really leaves zero component along the direction in the residual stream, that weight orthogonalization equals hook ablation on Llama-style models and restores weights afterwards, and that the pipeline logs no generated text.
+
+**What is not verified:** no real-model result exists yet. Run the v3 notebook on a GPU before quoting any rate or latency.
+
+**Design finding:** on Gemma-2, weight orthogonalization is *not* equivalent to hook ablation, because a scaled RMSNorm sits between the attention/MLP output and the residual add (the test suite shows the mismatch). The latency benchmark therefore runs on a Llama-style model (`Qwen/Qwen2.5-1.5B-Instruct`), where the equivalence is exact.
+
+Other v3 fixes: the last decoder layer is no longer read from a post-final-norm hidden state, the chat template's BOS is no longer duplicated, and the scorer ignores topical words ("illegal", "harmful") that also appear in compliant answers.
+
+```bash
+pip install -r requirements.txt && pytest -q
+```
 
 ---
 

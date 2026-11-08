@@ -1,0 +1,11 @@
+torch>=2.1
+transformers>=4.44,<5
+accelerate>=0.33
+huggingface_hub>=0.24
+pandas>=2.0
+numpy>=1.26
+scikit-learn>=1.4
+matplotlib>=3.8
+seaborn>=0.13
+tqdm>=4.66
+pytest>=8.0
